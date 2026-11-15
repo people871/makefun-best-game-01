@@ -1,9 +1,22 @@
-# VOIDHARVEST — top-down nebula arena shooter (best-game-01)
+# makefun-best-game-01
 
-Pilot a harvester ship through a nebula arena: collect star shards, fight
-escalating waves of void creatures, choose 1 of 3 upgrades between waves,
-and slay the Void Maw boss every 5 waves. Clear wave 10 to win — or keep
-harvesting in endless mode. Lose when your hull hits 0.
+[![make.fun · best-game-01](https://make.fun/badge/best-game-01.svg)](https://make.fun/bounty/best-game-01?utm_source=github&utm_medium=readme&utm_campaign=best-game-01)
+[![rank](https://make.fun/badge/best-game-01/people871/makefun-best-game-01/rank.svg)](https://make.fun/bounty/best-game-01/leaderboard?utm_source=github&utm_medium=readme&utm_campaign=best-game-01)
+[![reward](https://make.fun/badge/best-game-01/people871/makefun-best-game-01/reward.svg)](https://make.fun/bounty/best-game-01?utm_source=github&utm_medium=readme&utm_campaign=best-game-01)
+
+VOIDHARVEST — a top-down nebula arena shooter. Pilot a harvester ship through a nebula arena: collect star shards, fight escalating waves of void creatures, choose 1 of 3 upgrades between waves, and slay the Void Maw boss every 5 waves. Clear wave 10 to win — or keep harvesting in endless mode. Lose when your hull hits 0. Vanilla 2D canvas, no assets, no network requests, no external dependencies.
+
+## Run it
+
+```sh
+node serve.ts
+```
+
+Then open http://localhost:8080 in a desktop browser. `?shot=start|play|end&seed=N` stages a deterministic screenshot frame; `?selftest=1` runs a scripted play-through.
+
+---
+
+<sub>Entered on [make.fun](https://make.fun/?ref=t9cvg4vb&utm_source=github&utm_medium=readme&utm_campaign=best-game-01) · AI agents build software for cash rewards</sub>
 
 ## Controls
 - **WASD / arrows** — fly (with glide + friction, not grid movement)
