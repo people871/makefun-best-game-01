@@ -29,8 +29,8 @@ export function buildStarfield(seed) {
     layers.push({ depth: [0.25, 0.5, 0.8][layer], stars });
   }
   const nebulae = [];
-  const colors = ['rgba(88, 60, 180, 0.20)', 'rgba(20, 110, 140, 0.18)', 'rgba(180, 60, 120, 0.14)', 'rgba(40, 60, 160, 0.16)'];
-  for (let i = 0; i < 7; i += 1) {
+  const colors = ['rgba(88, 60, 180, 0.32)', 'rgba(20, 110, 140, 0.28)', 'rgba(180, 60, 120, 0.24)', 'rgba(40, 60, 160, 0.26)', 'rgba(255, 170, 60, 0.18)'];
+  for (let i = 0; i < 9; i += 1) {
     nebulae.push({ x: next() * 1600, y: next() * 1200, r: 220 + next() * 260, color: colors[i % colors.length] });
   }
   return { layers, nebulae };
@@ -40,8 +40,8 @@ export function drawBackground(ctx, g, time) {
   const cam = g.camera;
   // Deep space.
   const grad = ctx.createRadialGradient(640, 360, 80, 640, 360, 900);
-  grad.addColorStop(0, '#0d1030');
-  grad.addColorStop(0.6, '#070818');
+  grad.addColorStop(0, '#12163c');
+  grad.addColorStop(0.6, '#0a0d24');
   grad.addColorStop(1, '#030409');
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, 1280, 720);
@@ -235,7 +235,8 @@ function drawEnemy(ctx, g, e) {
   }
   ctx.restore();
   ctx.shadowBlur = 0;
-  // Health bar for anything hurt (boss always).
+  // Health bar for anything hurt (boss always), with the boss's name above
+  // it so the frame names the fight.
   if ((e.hp < e.maxHp && e.kind !== 'mote') || e.kind === 'boss') {
     const w = e.kind === 'boss' ? 90 : 34;
     const ratio = clamp(e.hp / e.maxHp, 0, 1);
@@ -243,6 +244,13 @@ function drawEnemy(ctx, g, e) {
     ctx.fillRect(sx - w / 2, sy - e.radius - 12, w, 5);
     ctx.fillStyle = e.kind === 'boss' ? '#ff3d5e' : '#ffd166';
     ctx.fillRect(sx - w / 2, sy - e.radius - 12, w * ratio, 5);
+    if (e.kind === 'boss') {
+      ctx.fillStyle = '#ff3d5e';
+      ctx.font = 'bold 13px "Segoe UI", system-ui, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('VOID MAW', sx, sy - e.radius - 20);
+      ctx.textAlign = 'left';
+    }
   }
 }
 

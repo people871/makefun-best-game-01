@@ -25,7 +25,21 @@ function simulate(g, seconds, steer) {
 // screenshot shows real combat, not a posed scene.
 function autopilot(g) {
   const p = g.player;
-  const target = nearestEnemy(g);
+  // Prefer the nearest non-boss enemy: the boss is the frame's landmark and
+  // takes far too long to kill, so shooting it starves the kill count and
+  // the score. Fall back to the boss when it is the only enemy left. The
+  // boss keeps approaching the player, so it stays in frame either way.
+  let target = null;
+  let bestD = Infinity;
+  for (const e of g.enemies) {
+    if (!e.alive || e.kind === 'boss') continue;
+    const d = (e.x - p.x) * (e.x - p.x) + (e.y - p.y) * (e.y - p.y);
+    if (d < bestD) {
+      bestD = d;
+      target = e;
+    }
+  }
+  if (!target) target = nearestEnemy(g);
   const cx = 800;
   const cy = 600;
   let mx = 0;
@@ -73,10 +87,10 @@ function autopilot(g) {
 export function stageShot(g, scene, seed) {
   g.resetRun(seed);
   if (scene === 'start') {
-    // Title over the drifting nebula, with a few motes wandering behind it
-    // so the backdrop reads as a living arena, not an empty gradient.
+    // Title over the drifting nebula, with motes wandering behind it so
+    // the backdrop reads as a living arena, not an empty gradient.
     g.state = 'title';
-    for (let i = 0; i < 5; i += 1) {
+    for (let i = 0; i < 8; i += 1) {
       spawnEnemy(g, 'mote', g.rng.range(200, 1400), g.rng.range(200, 1000));
     }
     simulate(g, 2.5);
@@ -86,19 +100,22 @@ export function stageShot(g, scene, seed) {
       return sx > 80 && sx < 1200 && sy > 120 && sy < 600;
     });
   } else if (scene === 'play') {
-    // Wave 4: motes + spitters + a brute, a busy fight with the HUD
-    // populated. The autopilot is lethal, so the staging retries with a
-    // shorter run until the wave is still in progress with enemies visible
-    // — the shot must show live combat, not the wave-clear screen.
+    // Wave 5 (boss): the Void Maw is the frame's landmark — big ringed maw,
+    // red pulsing core, health bar — plus its escort (14 motes, 3 spitters,
+    // 2 brutes) and its radial bursts, so the shot shows a busy boss fight
+    // with the HUD populated, not a sparse wave-4 skirmish. The autopilot
+    // is lethal, so the staging retries with a shorter run until the wave
+    // is still in progress with enemies visible — the shot must show live
+    // combat, not the wave-clear screen.
     let staged = false;
-    const durations = [7, 5, 4];
+    const durations = [9, 7, 5];
     for (let attempt = 0; attempt < durations.length && !staged; attempt += 1) {
       g.resetRun(seed + attempt);
       g.startRun();
       g.waveActive = false;
       g.spawnQueue = [];
       g.enemies = [];
-      startWave(g, 4);
+      startWave(g, 5);
       simulate(g, durations[attempt], () => autopilot(g));
       staged =
         g.state === 'playing' &&
@@ -120,7 +137,14 @@ export function stageShot(g, scene, seed) {
     g.state = 'victory';
     g.victoryShown = true;
     if (g.score > g.best) g.best = g.score;
-    simulate(g, 1.2);
+    simulate(g, 1.0);
+    // Golden celebration bursts around the title (seeded, deterministic —
+    // the particle system draws from the game's RNG). Spawned late so they
+    // are still bright at the freeze; the victory overlay draws over them.
+    g.particles.burst(640, 300, { count: 48, speed: 280, life: 1.4, size: 3.5, color: '#ffd166' });
+    g.particles.burst(420, 200, { count: 24, speed: 200, life: 1.2, size: 3, color: '#ff9d3c' });
+    g.particles.burst(860, 200, { count: 24, speed: 200, life: 1.2, size: 3, color: '#7ee7ff' });
+    simulate(g, 0.25);
   } else {
     throw new Error(`unknown shot scene: ${scene}`);
   }

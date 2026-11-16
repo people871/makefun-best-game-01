@@ -35,11 +35,15 @@ export function drawHud(ctx, g) {
   ctx.font = 'bold 15px "Segoe UI", system-ui, sans-serif';
   ctx.fillStyle = '#7ee7ff';
   ctx.fillText(`WAVE ${g.wave} / 10`, 640, 56);
+  // Win / lose, so the goal is readable at a glance.
+  ctx.fillStyle = 'rgba(255,255,255,0.65)';
+  ctx.font = '13px "Segoe UI", system-ui, sans-serif';
+  ctx.fillText('WIN: clear wave 10  ·  LOSE: hull 0', 640, 78);
   // Combo, when it is running.
   if (g.combo >= 3 && g.comboTimer > 0) {
     ctx.fillStyle = '#ffd166';
     ctx.font = 'bold 18px "Segoe UI", system-ui, sans-serif';
-    ctx.fillText(`COMBO x${(1 + Math.floor(g.combo / 5) * 0.5).toFixed(1)}  (${g.combo} kills)`, 640, 80);
+    ctx.fillText(`COMBO x${(1 + Math.floor(g.combo / 5) * 0.5).toFixed(1)}  (${g.combo} kills)`, 640, 102);
   }
   // Top-right: shards, kills, best.
   ctx.textAlign = 'right';
@@ -243,6 +247,13 @@ export function formatTime(seconds) {
 
 export function drawVictory(ctx, g) {
   ctx.fillStyle = 'rgba(3, 10, 4, 0.62)';
+  ctx.fillRect(0, 0, 1280, 720);
+  // Golden celebration glow behind the title, so winning reads as winning.
+  const glow = ctx.createRadialGradient(640, 220, 20, 640, 220, 420);
+  glow.addColorStop(0, 'rgba(255, 209, 102, 0.30)');
+  glow.addColorStop(0.5, 'rgba(255, 157, 60, 0.13)');
+  glow.addColorStop(1, 'rgba(255, 209, 102, 0)');
+  ctx.fillStyle = glow;
   ctx.fillRect(0, 0, 1280, 720);
   ctx.textAlign = 'center';
   ctx.fillStyle = '#ffd166';
